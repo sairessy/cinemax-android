@@ -19,9 +19,7 @@ export default class Header extends React.Component {
         flexDirection: 'row',
         justifyContent: 'space-between',
         position: 'relative',
-        backgroundColor: '#000',
-        borderBottomWidth: 2,
-        borderColor: '#000'
+        backgroundColor: '#000000'
       }}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image
