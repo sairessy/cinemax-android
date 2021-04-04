@@ -14,7 +14,6 @@ export default class Header extends React.Component {
     return (
       <View style={{
         alignItems: 'center',
-        justifyContent: 'center',
         padding: 2,
         flexDirection: 'row',
         justifyContent: 'space-between',

@@ -14,12 +14,14 @@ import {
   TextInput
 } from 'react-native';
 
-import { RadioButton } from 'react-native-paper';
+import { Button, RadioButton } from 'react-native-paper';
 
 import { Video, AVPlaybackStatus } from 'expo-av';
 import Constants from 'expo-constants';
 
 import Header from './components/Header';
+import Contact from './components/Contact';
+import UpdateCheck from './components/UpdateCheck';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -214,8 +216,8 @@ export default class App extends React.Component {
                 <Image
                   source={
                     this.state.categoriesShown ? 
-                    require('./assets/times-solid.png') : 
-                    require('./assets/bars.png')
+                    require('./assets/icons/times-solid.png') : 
+                    require('./assets/icons/bars.png')
                   }
 
                   style={{
@@ -239,7 +241,6 @@ export default class App extends React.Component {
                 backgroundColor: '#000000',
                 height: 0.3 * screen.height
               }}
-              ref={''}
               source={{
                 uri: this.state.video.url,
               }}
@@ -303,7 +304,6 @@ export default class App extends React.Component {
                 fontSize: 18,
                 padding: 5,
                 textAlign: 'center',
-                color: this.state.theme.color,
                 color: this.state.theme.id === 'dark' ? '#111' : '#444',
               }}
             >
@@ -376,7 +376,15 @@ export default class App extends React.Component {
           >
             <TouchableOpacity
               onPress={()=> this.setState({activeTab: 'search'})}
-              style={{flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center', padding: 5}}              
+              style={{
+                flexDirection: 'row', 
+                flex: 1, 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                padding: 5,
+                borderBottomWidth: 1,
+                borderBottomColor: this.state.activeTab === 'search' ? '#ff0000' : '#ccc'
+              }}              
             >
             <Image
               source={
@@ -386,13 +394,21 @@ export default class App extends React.Component {
               }
               style={{width: 25, height: 25, marginRight: 5}}
             />
-            <Text style={{color: this.state.activeTab === 'search' ? '#ff0000' : '#000000'}}>Search</Text>
+            <Text style={{color: this.state.activeTab === 'search' ? '#ff0000' : '#000000'}}>Pesquisa</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={()=> {
-                this.setState({activeTab: 'config'})}}
-              style={{color: this.state.activeTab === 'config' ? '#ff0000' : '#000000', flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center', padding: 5}}
+              onPress={()=> {this.setState({activeTab: 'config'})}}
+              style={{
+                color: this.state.activeTab === 'config' ? '#ff0000' : '#000000', 
+                flexDirection: 'row', 
+                flex: 1, 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                padding: 5,
+                borderBottomWidth: 1,
+                borderBottomColor: this.state.activeTab === 'config' ? '#ff0000' : '#ccc'
+              }}
             >
             <Image
               source={
@@ -402,7 +418,31 @@ export default class App extends React.Component {
               }
               style={{width: 25, height: 25, marginRight: 5}}
             />
-            <Text style={{color: this.state.activeTab === 'config' ? '#ff0000' : '#000000'}}>Settings</Text>
+            <Text style={{color: this.state.activeTab === 'config' ? '#ff0000' : '#000000'}}>Config.</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={()=> {this.setState({activeTab: 'info'})}}
+              style={{
+                color: this.state.activeTab === 'info' ? '#ff0000' : '#000', 
+                flexDirection: 'row', 
+                flex: 1, 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                padding: 5,
+                borderBottomWidth: 1,
+                borderBottomColor: this.state.activeTab === 'info' ? '#ff0000' : '#ccc'
+              }}
+            >
+            <Image
+              source={
+                this.state.activeTab === 'info' ?
+                require('./assets/icons/info-circle-solid-active.png') :
+                require('./assets/icons/info-circle-solid.png') 
+              }
+              style={{width: 25, height: 25, marginRight: 5}}
+            />
+            <Text style={{color: this.state.activeTab === 'info' ? '#ff0000' : '#000000'}}>Info</Text>
             </TouchableOpacity>
           </View>
 
@@ -479,7 +519,7 @@ export default class App extends React.Component {
                           margin: 5,
                           display: this.movieHasView(m.id) ? 'flex' : 'none'
                         }}
-                        source={require('./assets/history-solid.png')}
+                        source={require('./assets/icons/history-solid.png')}
                       />
                     </TouchableOpacity>
                     )
@@ -496,8 +536,8 @@ export default class App extends React.Component {
                 display: this.state.activeTab === 'config' ? 'flex' : 'none'
               }}
             >
-              <Text style={{margin: 5, fontSize: 18}}>Theme</Text>
-              <View style={{marginTop:20}}>
+              <Text style={{margin: 5, color: '#555', textAlign: 'center'}}>Tema</Text>
+              <View>
 
               <RadioButton.Group
                 onValueChange={(val)=> {
@@ -506,23 +546,25 @@ export default class App extends React.Component {
 
                 value={this.state.checked}
               >
-                <RadioButton.Item label="Light" value="first" color="#ff0000" uncheckedColor="#000"/>
-                <RadioButton.Item label="Dark" value="second" color="#ff0000" uncheckedColor="#000" />
+                <RadioButton.Item label="Claro" value="first" color="#ff0000" uncheckedColor="#000"/>
+                <RadioButton.Item label="Escuro" value="second" color="#ff0000" uncheckedColor="#000" />
               </RadioButton.Group>
               </View>
             </View>
 
             
-            {/* Favorite tab */}
+            {/* Info tab */}
             <View
               style={{
                 flex: 1,
                 backgroundColor: '#fcfcfc',
-                display: this.state.activeTab === 'favorite' ? 'flex' : 'none'
+                display: this.state.activeTab === 'info' ? 'flex' : 'none'
               }}
             >
-         
-              {/* <Text>Favorite</Text> */}
+              <Text style={{textAlign: 'center', color: '#555'}}>Fale connosco</Text>
+              <Contact />
+
+              <UpdateCheck />
             </View>
 
           </View>
