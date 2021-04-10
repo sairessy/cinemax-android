@@ -33,23 +33,39 @@ const screen = {
 const movies = require('./data/movies');
 const theme = require('./modules/theme');
 
+function getLimitedMovies(limit) {
+  let mvs = [];
+  for (let i = 0; i < limit; i++) {
+    mvs.push(movies[i]);
+  }
+
+  return mvs;
+}
+
 export default class App extends React.Component {
   constructor() {
     super();
 
+    this.limit = 40;
+    this.increment = 40;
+
+    this.moviesLTD = getLimitedMovies(this.limit);
+
     this.state = {
       categoriesShown: false,
       activeTab: 'search',
-      movies,
-      video: movies[4],
+      movies: this.moviesLTD,
+      video: this.moviesLTD[39],
       searchFocus: false,
       isFavorite: false,
+      searchText: '',
       favMovies: [],
       readyToDisplay: false,
       moviePlaying: false,
       alertShown: false,
       theme: theme.light,
       checked: 'first',
+      stillHaveData: true,
       anm: new Animated.Value(40 - screen.width)
     }
 
@@ -74,19 +90,20 @@ export default class App extends React.Component {
 
   // Search Movie given text
   searchMovie(text) {
+    this.setState({searchText: text});
     let results = [];
     
-    for (let i = 0; i < this.state.movies.length; i++) {
-      const movie = this.state.movies[i];
+    for (let i = 0; i < movies.length; i++) {
+      const movie = movies[i];
       if(movie.title.toLowerCase().includes(text.toLowerCase())) {
         results.push(movie);
       }
     }
 
-    if(results.length > 0 && text.length > 0) {
+    if(results.length > 0 && text.length > 3) {
       this.setState({movies: results});
     } else {
-      this.setState({movies});
+      this.setState({movies: this.moviesLTD});
     }
   }
 
@@ -94,7 +111,7 @@ export default class App extends React.Component {
   playMovie(m) {
 
     this.setState({
-      movies,
+      movies: this.moviesLTD,
       video: m,
       categoriesShown: false,
       readyToDisplay: false,
@@ -172,6 +189,19 @@ export default class App extends React.Component {
     return movieTitle;
   }
 
+  getMoreMovies() {
+    this.limit += this.increment;
+    
+    if(this.limit >= movies.length) {
+      this.limit = movies.length;
+      this.setState({stillHaveData: false});
+    }
+    
+    this.moviesLTD = getLimitedMovies(this.limit);
+    
+    this.setState({movies: this.moviesLTD});
+  }
+
   // Change Theme
   changeTheme(val) {
     this.setState({checked: val}, ()=> {
@@ -239,7 +269,7 @@ export default class App extends React.Component {
               ref={this.video}
               style={{
                 backgroundColor: '#000000',
-                height: 0.3 * screen.height
+                height: 0.3 * screen.height              
               }}
               source={{
                 uri: this.state.video.url,
@@ -266,15 +296,14 @@ export default class App extends React.Component {
                 left: 0,
                 right: 0,
                 margin: 'auto',
-                // display: this.state.moviePlaying ? 'none' : 'flex'
-                display: 'flex'
+                display: this.state.readyToDisplay ? 'none' : 'flex'
               }}
             >
               <Image
                 style={{
                   width: 60,
                   height: 60,
-                  display: this.state.readyToDisplay ? 'none' : 'flex'
+                  // display: this.state.readyToDisplay ? 'none' : 'flex'
                 }}
                 source={require('./assets/icons/loader.gif')}
               />
@@ -304,6 +333,8 @@ export default class App extends React.Component {
                 fontSize: 18,
                 padding: 5,
                 textAlign: 'center',
+                borderBottomWidth: 1,
+                borderBottomColor: '#000',
                 color: this.state.theme.id === 'dark' ? '#111' : '#444',
               }}
             >
@@ -319,7 +350,9 @@ export default class App extends React.Component {
                 flexWrap: 'wrap'
               }}
             >
-              {this.state.video.related.map(r=> {
+              <Text style={{padding: 10, textAlign: 'justify'}}>{this.state.video.description}</Text>
+             
+              {/* {this.state.movies.map(r=> {
                 return (
                   <TouchableOpacity
                     style={{
@@ -334,7 +367,7 @@ export default class App extends React.Component {
                     <Text style={{color: '#555'}}>{this.getMovieById(r)}</Text>
                   </TouchableOpacity>
                 )
-              })}
+              })} */}
             </View>
           </ScrollView>
 
@@ -509,7 +542,7 @@ export default class App extends React.Component {
                           }}
                           source={{uri: m.img}}
                         />
-                        <Text>{m.title}</Text>
+                        <Text style={{flexWrap: 'wrap', fontSize: 12}}>{m.title}</Text>
                       </View>
 
                       <Image 
@@ -525,6 +558,25 @@ export default class App extends React.Component {
                     )
                   })
                 }
+
+                {/* Get more movies */}
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: '#4285F4',
+                    padding: 7,
+                    borderRadius: 2,
+                    margin: 5,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    display: (this.state.searchText === '' && this.state.stillHaveData) ? 'flex' : 'none'
+                  }}
+                  activeOpacity={0.8}
+                  onPress={()=>this.getMoreMovies()}
+                >
+                  <Image style={{width: 25, height: 25, marginRight: 5}} source={require('./assets/icons/plus-solid.png')} />
+                  <Text style={{color: '#fff', textAlign: 'center'}}>Mostrar mais</Text>
+                </TouchableOpacity>
               </ScrollView>
             </View>
             

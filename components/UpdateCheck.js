@@ -42,7 +42,7 @@ export default class UpdateCheck extends React.Component {
           </Text>
           <TouchableOpacity
             style={{
-              backgroundColor: '#00ff00',
+              backgroundColor: '#34ffc0',
               padding: 10,
               borderRadius: 2,
               color: '#fff',

@@ -34,6 +34,13 @@ export default class Contact extends React.Component {
           />
         </TouchableOpacity>
 
+        <TouchableOpacity>
+          <Image
+            source={require('../assets/icons/whatsapp.png')}
+            style={{width: 30, height: 30, margin: 5}}
+          />
+        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={()=> Linking.openURL('http://fb.com/sairessyvictorino')}
         >
